@@ -1,0 +1,41 @@
+/* src/components/Navbar.css */
+
+.navbar {
+    background-color: #f0f4f8; /* Light background color */
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px; /* Center the content */
+    margin: 0 auto;
+}
+
+h1 {
+    color: #4a90e2; /* Header color */
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 15px; /* Spacing between buttons */
+}
+
+.nav-button {
+    background-color: #4a90e2; /* Button color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: #357ab8; /* Darker shade on hover */
+}

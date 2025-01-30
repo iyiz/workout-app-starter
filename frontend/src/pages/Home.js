@@ -1,38 +1,53 @@
-import { useEffect }from 'react'
-import { useWorkoutsContext } from "../hooks/useWorkoutsContext"
-
-// components
-import WorkoutDetails from '../components/WorkoutDetails'
-import WorkoutForm from '../components/WorkoutForm'
+// src/pages/Home.js
+import React, { useState, useEffect } from 'react';
+import AddWorkoutForm from './AddWorkoutForm';
+import WorkoutList from './WorkoutList';
 
 const Home = () => {
-  const {workouts, dispatch} = useWorkoutsContext()
+    const [workouts, setWorkouts] = useState([]);
 
-  useEffect(() => {
-    const fetchWorkouts = async () => {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/workouts`
-      )
-      const json = await response.json()
+    useEffect(() => {
+        const fetchWorkouts = async () => {
+            const response = await fetch('/api/workouts', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+            const data = await response.json();
+            setWorkouts(data);
+        };
+        fetchWorkouts();
+    }, []);
 
-      if (response.ok) {
-        dispatch({type: 'SET_WORKOUTS', payload: json})
-      }
-    }
+    const handleAddWorkout = async (newWorkout) => {
+        const response = await fetch('/api/workouts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify(newWorkout),
+        });
+        const addedWorkout = await response.json();
+        setWorkouts((prev) => [...prev, addedWorkout]);
+    };
 
-    fetchWorkouts()
-  }, [dispatch])
+    const handleDeleteWorkout = async (id) => {
+        await fetch(`/api/workouts/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        setWorkouts((prev) => prev.filter((workout) => workout.id !== id));
+    };
 
-  return (
-    <div className="home">
-      <div className="workouts">
-        {workouts && workouts.map((workout) => (
-          <WorkoutDetails key={workout._id} workout={workout} />
-        ))}
-      </div>
-      <WorkoutForm />
-    </div>
-  )
-}
+    return (
+        <div>
+            <AddWorkoutForm onAddWorkout={handleAddWorkout} />
+            <WorkoutList workouts={workouts} onDelete={handleDeleteWorkout} />
+        </div>
+    );
+};
 
-export default Home
+export default Home;
